@@ -3,7 +3,7 @@ import numpy as np
 from recipe_embedder import RecipeEmbedder
 from recipe_index import RecipeIndex
 from recipe_search import RecipeSearch
-from recipe_load import load_recipes_assets_from_dir, project_main_directory
+from recipe_assets import load_recipes_assets_from_dir, project_main_directory
 
 def main():
     json_dir = project_main_directory / "json_data"
