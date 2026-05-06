@@ -21,17 +21,23 @@ def load_recipes_assets_from_dir(dir_path: Path) -> list:
 
 # Load recipes from single file
 def load_recipes(json_path: str) -> list:
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
     recipes = []
-    for item in data:
-        clean_names, full_texts = parse_recipe_ingredients(item['ingredients'])
-        recipes.append({
-            "recipe_name": item['recipe_name'],
-            "url": item['url'],
-            "ingredients_full": full_texts,
-            "ingredients_raw": item['ingredients'],
-        })
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if not line.strip():
+                continue
+
+            print(f"Parse line: [{line}]")
+
+            item = json.loads(line)
+            clean_names, full_texts = parse_recipe_ingredients(item['ingredients'])
+
+            recipes.append({
+                "recipe_name": item['recipe_name'],
+                "url": item['url'],
+                "ingredients_full": full_texts,
+                "ingredients_raw": item['ingredients'],
+            })
 
     return recipes

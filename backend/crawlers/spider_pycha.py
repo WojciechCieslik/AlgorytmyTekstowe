@@ -25,7 +25,7 @@ class MySpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.output_path = recipe_assets.project_main_directory / "json_data" / "pycha_recipes.json"
+        self.output_path = recipe_assets.project_main_directory / "json_data" / "data_pycha.json"
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(self.output_path, 'w', encoding='utf-8'):
@@ -52,7 +52,7 @@ class MySpider(scrapy.Spider):
         name = title.get_text(strip=True) if title else "unknown"
 
         ingredients = [
-            li.get_text(strip=True)
+            [li.get_text(strip=True)]
             for li in soup.find_all('li', itemprop='recipeIngredient')
         ]
 

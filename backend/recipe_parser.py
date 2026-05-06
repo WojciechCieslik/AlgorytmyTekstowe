@@ -5,6 +5,9 @@ def parse_recipe_ingredients(ingredients: List[List[str]]) -> Tuple[List[str], L
     full_texts = []
 
     for pair in ingredients:
+        if not pair[0]:
+            continue
+
         name = pair[0].strip()
         unit = pair[1].strip() if len(pair) > 1 else ''
 
