@@ -14,4 +14,4 @@ class RecipeEmbedder:
 
     def embed_query(self, user_ingredients: List[str]) -> np.ndarray:
         text = f"Składniki: {', '.join(sorted(set(user_ingredients)))}"
-        return self.model.encode(text, normalize_embeddings=True
+        return self.model.encode(text, normalize_embeddings=True)

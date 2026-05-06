@@ -1,32 +1,16 @@
 import json
 import numpy as np
-from recipe_parser import parse_recipe_ingredients
 from recipe_embedder import RecipeEmbedder
 from recipe_index import RecipeIndex
 from recipe_search import RecipeSearch
-
-def load_recipes(json_path: str) -> list:
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    recipes = []
-    for item in data:
-        clean_names, full_texts = parse_recipe_ingredients(item['ingredients'])
-        recipes.append({
-            "recipe_name": item['recipe_name'],
-            "url": item['url'],
-            "ingredients_full": full_texts,
-            "ingredients_raw": item['ingredients'],  # oryginalne pary
-        })
-    return recipes
+from recipe_load import load_recipes_assets_from_dir, project_main_directory
 
 def main():
-    # 1. Wczytaj przepisy
-    recipes = load_recipes("recipes.json")   # <-- podmień na właściwą ścieżkę
+    json_dir = project_main_directory / "json_data"
+    recipes = load_recipes_assets_from_dir(json_dir)
 
-    # 2. Inicjalizacja embeddera i indeksu
     embedder = RecipeEmbedder()
-    index = RecipeIndex(db_path="memory://")  # "data/lancedb" do zapisu na dysku
+    index = RecipeIndex(db_path="memory://")
 
     # 3. Generuj embeddingi i wypełnij tabelę
     vectors = []

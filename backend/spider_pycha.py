@@ -43,6 +43,7 @@ class MySpider(scrapy.Spider):
 
         if ingredients:
             self.logger.info(f'Adding recipe for: {{ {name} }}')
+            self.logger.info(f'Ingredients: {{ {ingredients} }}')
 
             yield {
                 'url': response.url,
