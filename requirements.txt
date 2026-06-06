@@ -9,3 +9,5 @@ ragas
 langchain
 langchain-community
 pydantic
+pandas
+numpy
