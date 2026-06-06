@@ -4,3 +4,8 @@ ollama
 sentence-transformers
 lancedb
 pandas
+pandas-toon
+ragas
+langchain
+langchain-community
+pydantic
