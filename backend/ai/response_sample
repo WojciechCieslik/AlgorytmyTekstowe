@@ -1,0 +1,69 @@
+
+"""
+qwen3:8b
+crucial ingredients:
+czas:  25.133169412612915
+
+{
+  "crucial_ingredients_for_recipes": [
+    ["biodrówka", "słonina"],
+    ["polędwiczki z kurczaka"],
+    ["schab"],
+    ["kotlety karkowe wieprzowe"],
+    ["kotlety z kostką"],
+    ["pierś z kurczaka"],
+    ["kotlety ze schabu środkowego"]
+  ]
+}
+gemma4:latest
+found_recipes:
+Iteracja 1
+
+czas:  48.20162057876587
+
+Iteracja 2
+{"info": "Najlepszy przepis to Schabowy inaczej, bo wykorzystuje schab, bułkę tartą i jajka. Brak tylko koperku/natki pietruszki (opcjonalne) oraz majonezu.", "found": true, "dish_name": "Schabowy inaczej", "dish_link": "https://aniagotuje.pl/przepis/schabowy-inaczej"}
+czas:  2.172287702560425
+
+Iteracja 3
+{
+"info": "Najlepszym wyborem jest 'Schabowy inaczej', który wykorzystuje schab, jajka i bułkę tartą. Składnikami, które są kluczowe dla tego przepisu z twojej listy, ale których brakuje do ugotowania (lub nie są wymienione w zapasach), są: majonez, koperkowść i natka pietruszki oraz cytryna.",
+"found":true,
+"dish_name":"Schabowy inaczej",
+"dish_link":"https://aniagotuje.pl/przepis/schabowy-inaczej"
+}
+czas:  39.478102922439575
+
+Iteracja 4
+{"info": "Najbardziej dopasowany przepis to 'Schabowy inaczej', ponieważ wymaga tylko składników, które posiadasz: schabu, jajek, bułki tartej i cebuli. Brakuje jednak koperku lub natki pietruszki, a dla idealnego efektu warto dodać ich odrobinę.", "found":true,"dish_name":"Schabowy inaczej","dish_link":"https://aniagotuje.pl/przepis/schabowy-inaczej"}
+czas:  30.09777855873108
+
+Iteracja 5
+{"info": "Najlepiej sprawdzą się kotlety schabowe. Posiadasz wszystkie kluczowe składniki (schab, jajka, bułka tarta) potrzebne do wykonania tego dania.", "found": true, "dish_name": "Kotlety schabowe", "dish_link": "https://aniagotuje.pl/przepis/kotlety-schabowe"}
+czas:  24.822341203689575
+
+Iteracja 6
+{
+"info": "Najbardziej pasujący przepis to 'Schabowy inaczej', ponieważ brakuje tylko koperku i natki pietruszki, a większość kluczowych składników (schab, jajka, bułka tarta) jest dostępna. Brak ogórków kiszonych do przygotowania karkówki po cygańsku.",
+"found":true,
+"dish_name":"Schabowy inaczej",
+"dish_link":"https://aniagotuje.pl/przepis/schabowy-inaczej/"
+}
+czas:  36.67533993721008
+
+Iteracja 7
+{"info": "Możesz przygotować 'Schabowy inaczej', ponieważ masz wszystkie kluczowe składniki. Potrzebne jest też: majonez, koperku i natka pietruszki (świeże zioła), oliwa roślinna do smażenia.", "found":true,"dish_name":"Schabowy inaczej","dish_link":"https://aniagotuje.pl/przepis/schabowy-inaczej"}
+czas:  28.93017268180847
+
+Iteracja 8
+{ "info": "Najlepiej będzie dla Ciebie 'Schabowy inaczej', ponieważ masz wszystkie kluczowe składniki, które są konieczne do przygotowania dania.", "found": true, "dish_name": "Schabowy inaczej", "dish_link": "https://aniagotuje.pl/przepis/schabowy-inaczej" }
+czas:  26.952003717422485
+
+Iteracja 9
+{"info": "Znaleziono przepis na Kotlety schabowe. Potrzebne składniki, które posiadasz: ['schab', 'ziemniaki', 'bułka tarta', 'szczypiorek', 'cebula', 'marchewka', 'jabłko', 'jajka', 'kurczak']. Kluczowy składnik dla tego dania to 'kotlety ze schabu środkowego'. Posiadasz 'schab' oraz 'bułka tarta' i 'jajka', które są bardzo bliskie wymaganiom. Dodatkowo, w tym przepisie możesz wykorzystać jajka, bułkę tartą i schab.", "found": true, "dish_name": "Kotlety schabowe", "dish_link": "https://aniagotuje.pl/przepis/kotlety-schabowe"}
+czas:  5.038720369338989
+
+Iteracja 10
+{"info": "Najlepiej sprawdzi się przepis na Kotlety schabowe, wykorzystując dostępny szak (kotlety ze schabu środkowego).", "found": true, "dish_name": "Kotlety schabowe", "dish_link": "https://aniagotuje.pl/przepis/kotlety-schabowe"}
+czas:  31.345506191253662
+"""
