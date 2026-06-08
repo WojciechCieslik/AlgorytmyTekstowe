@@ -1,0 +1,132 @@
+[
+    {
+        "test_id": "1_schabowy",
+        "user_input": "Mam w lodówce: ['schab', 'jajka', 'bułka tarta', 'smalec', 'sól', 'pieprz', 'ziemniaki']",
+        "retrieved_contexts": [
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Kabaczek. Składniki: olej null, pieprz null, bułka tarta null, jajka null, kabaczek null",
+            "Przepis na Schabowy inaczej. Składniki: 400 g schabu - 4 duże kotlety, 1 średnie jajko, 1 łyżka majonezu, po łyżce siekanego koperku i natki pietruszki, łyżka soku z cytryny, przyprawy: pół łyżeczki soli, 1/4 płaskiej łyżeczki pieprzu, 4 łyżki bułki tartej, olej roślinny do smażenia",
+            "Przepis na Kopytka. Składniki: 1 kg ugotowane ziemniaki, około 230 g - 9 czubatych łyżek mąka pszenna tortowa, 1 sztuka średnie lub małe jajko, płaska łyżeczka sól",
+            "Przepis na Pieczeń wieprzowa. Składniki: wędzony schab 1 kilogram, ziemniaki 500 gramów, włoszczyzna 1 pęczek, szpinak 300 gramów, cebula 2 sztuki, mąka 1 łyżka, śmietana 1 szklanka, tarty chrzan 3 łyżki, sok z cytryny 1 łyżka, sól 1 szczypta, pieprz 1 szczypta, olej 3 łyżki, masło 1 łyżka"
+        ],
+        "response": "{\n\"info\": \"Znaleziono przepis 'Kopytka', ponieważ brakuje tylko mąki pszennej, a wszystkie inne przepisy wymagają składników, których nie posiadasz (np. wędzony schab, kabaczek, rozmaryn).\",\n\"found\": true,\n\"dish_name\": \"Kopytka\",\n\"dish_link\": \"https://aniagotuje.pl/przepis/tradycyjne-kopytka-z-bulka-tarta\"}",
+        "reference": "Model powinien wybrać przepis 'Schabowy inaczej'. Użytkownik posiada wszystkie kluczowe składniki do niego: schab, jajko, bułkę tartą, przyprawy i tłuszcz. Wybór 'Kopytek' jest błędny, ponieważ użytkownik nie posiada absolutnie kluczowej mąki pszennej."
+    },
+    {
+        "test_id": "2_nalesniki",
+        "user_input": "Mam w lodówce: ['mąka pszenna', 'mleko', 'jajka', 'woda', 'olej', 'sól']",
+        "retrieved_contexts": [
+            "Przepis na Jajka na miękko. Składniki: jajka",
+            "Przepis na Jajka na twardo. Składniki: jajka",
+            "Przepis na Kopytka. Składniki: 1 kg ugotowane ziemniaki, około 230 g - 9 czubatych łyżek mąka pszenna tortowa, 1 sztuka średnie lub małe jajko, płaska łyżeczka sól",
+            "Przepis na Ciasto na pierogi z masłem. Składniki: 500 g mąki pszennej, 250 ml ciepłej wody, małe jajko, 2 żółtka jaj, 50 g miękkiego masła, spora szczypta soli",
+            "Przepis na Jajko sadzone. Składniki: 2 średnie jajka, 2 łyżeczki masła klarowanego, szczypta soli, odrobina koperku"
+        ],
+        "response": "{\"info\": \"Brak kluczowego składnika: ziemniaki (wymagane do Kopytek). Najlepszy przepis to Ciasto na pierogi z masłem, ponieważ brakuje tylko 'masła' zamiast 'miękkiego masła', a wszystkie inne składniki są dostępne.\", \"found\": true, \"dish_name\": \"Ciasto na pierogi z masłem\", \"dish_link\": \"https://aniagotuje.pl/przepis/jak-zrobic-ciasto-na-pierogi-z-maslem-i-jajkiem\"}",
+        "reference":"Model powinien odrzucić 'Ciasto na pierogi' z powodu braku masła. Poprawną odpowiedzią jest wskazanie, że użytkownik może przygotować 'Jajka na miękko' lub 'Jajka na twardo', ponieważ jedynym pełnym składnikiem, z którego można tu zrobić kompletne danie z dostępnej listy, są jajka."
+    },
+    {
+        "test_id": "3_kopytka_brak_maki",
+        "user_input": "Mam w lodówce: ['ziemniaki', 'jajka', 'sól', 'masło', 'boczek']",
+        "retrieved_contexts": [
+            "Przepis na Jajka na miękko. Składniki: jajka",
+            "Przepis na Jajka na twardo. Składniki: jajka",
+            "Przepis na Kopytka. Składniki: 1 kg ugotowane ziemniaki, około 230 g - 9 czubatych łyżek mąka pszenna tortowa, 1 sztuka średnie lub małe jajko, płaska łyżeczka sól",
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Purée ziemniaczane z parmezanem i boczkiem. Składniki: Puree ziemniaczane z boczkiem i cebulką 1 opakowanie, mleko 1 szklanka, woda 1.5 szklanki, parmezan starty 3 łyżki, margaryna 1 łyżka, boczek wędzony 3 plastry"
+        ],
+        "response": "{\"info\": \"Najlepszy przepis to Kopytka. Brakuje tylko mąki pszennej, ale wszystkie inne kluczowe składniki są dostępne.\", \"found\": true, \"dish_name\": \"Kopytka\", \"dish_link\": \"https://aniagotuje.pl/przepis/tradycyjne-kopytka-z-bulka-tarta\"}",
+        "reference": "Model musi bezwzględnie odrzucić przepis na 'Kopytka' z powodu braku mąki pszennej, która jest kluczowa. Jedynymi prawidłowymi i kompletnymi przepisami do zrealizowania z podanej listy są 'Jajka na miękko' lub 'Jajka na twardo'."
+    },
+    {
+        "test_id": "4_paella_brak_ryzu",
+        "user_input": "Mam w lodówce: ['pierś z kurczaka', 'krewetki', 'groszek', 'cebula', 'czosnek', 'pomidory']",
+        "retrieved_contexts": [
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Piekielna krewetkowa. Składniki: pomidor 1 sztuka, pomidory z puszki bez skóry 1 opakowanie, 3 papryczki jalapeño pokrojone na kawałeczki (jeśli zupa ma być ostra, nie wyrzucaj nasionek) 3 sztuki, posiekany czosnek 2 sztuki, krewetki Black Tiger 250 gramów, sól 1 szczypta, pieprz 1 szczypta, tymianek 1 szczypta, ostra i słodka papryka w proszku 1 łyżka, cebula pokrojona w drobną kostkę 1 sztuka, cebula pokrojona w cienkie piórka 1 sztuka, sos barbecue 2 łyżki, świeża bazylia 1 pęczek, olej 2 łyżki",
+            "Przepis na Garnek pełen krewetek, kurczaka i oliwek. Składniki: krewetki królewskie surowe 200 gramów, pomidory pelatti 1 puszka, pieprz czarny mielony 1 szczypta, pierś z kurczaka 400 gramów, cebula 1 sztuka, ząbki czosnku 2 sztuki, zielona papryka 1 sztuka, czerwona papryka 1 sztuka, czarne oliwki 80 gramów, rukola 30 gramów, oliwa 40 mililitrów, Rosół z kury Knorr 2 sztuki",
+            "Przepis na Cebulowa z serową grzanką. Składniki: skrzydełka z kurczaka 2 sztuki, duża cebula 1 sztuka, marchewka 1 sztuka, pietruszka 1 sztuka, por 0.5 sztuki, gęsta śmietana 4 łyżki, ser wędzony 4 plastry, bagietka 1 sztuka, czosnek 1 sztuka, oliwa z oliwek 3 łyżki, Przyprawa w Mini kostkach Pietruszka Knorr 1 sztuka",
+            "Przepis na Makaron z krewetkami. Składniki: olej 1 łyżka, cukier 2 łyżki, papryka 1 łyżeczka, cebula czerwona 1 sztuka, curry 0.5 łyżeczki, czosnek ząbek 1 sztuka, makaron wstążki 300 gramów, krewetki ugotowane 500 gramów"
+        ],
+        "response": "{\"info\": \"Znaleziono przepis 'Garnek pełen krewetek, kurczaka i oliwek'. Brakuje tylko czarnych oliwek oraz rosołu z kury Knorr. Wszystkie inne kluczowe składniki (krewetki, pierś z kurczaka, cebula, czosnek) są dostępne.\", \"found\":true,\"dish_name\":\"Garnek pełen krewetek, kurczaka i oliwek\",\"dish_link\":\"https://www.przepisy.pl/przepis/garnek-pelen-krewetek-kurczaka-i-oliwek\"}",
+        "reference": "Model powinien odmówić podania przepisu lub poinformować, że z podanych opcji żadna nie może zostać wykonana w 100%. Przepis na 'Garnek pełen krewetek' jest najbliższy, ale brakuje do niego rosołu, oliwek oraz oliwy. System nie powinien wymuszać dań z brakami."
+    },
+    {
+        "test_id": "5_szum",
+        "user_input": "Mam w lodówce: ['truskawki', 'czosnek', 'boczek', 'czekolada', 'musztarda']",
+        "retrieved_contexts": [
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Pikantne ciasto z boczkiem. Składniki: olej 125 mililitrów, jajko 1 sztuka, sól 1 łyżka, mleko 6 łyżek, jajka 4 sztuki, boczek 500 gramów, mąka 400 gramów, proszek do pieczenia 2 łyżki, kwaśna śmietana 200 mililitrów, Przyprawa w Mini kostkach Czosnek Knorr 2 sztuki, słodka mielona papryka null, plastry żółtego sera 12 sztuk, biały ser półtłusty 200 gramów, biały ser trzykrotnie mielony 150 gramów",
+            "Przepis na Rolada ze schabu. Składniki: około 1200-1400 g schab środkowy lub od karczku, 200 g boczek parzony wędzony w plastrach, 200 g boczek surowy wędzony w plastrach, 6 ząbków czosnek, 1 łyżka musztarda delikatesowa, 2 łyżki majeranek, po pół płaskiej łyżeczki sól i pieprz",
+            "Przepis na Kiełbaski z boczkiem i sosem śliwkowym. Składniki: kiełbaski śniadaniowe 8 sztuk, Sos do pieczeni ciemny Knorr 1 opakowanie, boczek wędzony 8 plastrów, śliwki suszone 50 gramów, czerwone wino 150 mililitrów, szalotka 2 sztuki, świeży rozmaryn 1 sztuka, oliwa 1 łyżka",
+            "Przepis na Kasztany jadalne. Składniki: 500 g kasztany jadalne"
+        ],
+        "response": "{\n\"info\": \"Znaleziono przepis, który najbardziej pokrywa się ze składnikami dostępnymi w lodówce (boczek).\",\n\"found\": true,\n\"dish_name\": \"Pikantne ciasto z boczkiem\",\n\"dish_link\": \"https://www.przepisy.pl/przepis/pikantne-ciasto-z-boczkiem\"\n}",
+        "reference": "Zdecydowana odmowa. Użytkownik posiada niepasujące do siebie składniki. Wybranie 'Pikantnego ciasta z boczkiem' jest rażącym błędem, ponieważ użytkownik ma tylko boczek i czosnek, a brakuje mu fundamentów ciasta: mąki, mleka, jajek i sera."
+    },
+    {
+        "test_id": "6_tylko_przyprawy",
+        "user_input": "Mam w lodówce: ['sól', 'pieprz', 'olej', 'ocet', 'cukier', 'woda', 'musztarda']",
+        "retrieved_contexts": [
+            "Przepis na Żeberka w sosie :). Składniki: cebula 3 szklanki, pieprz 1 łyżka, żeberka 2 kilogramy, sól 1 łyżka, cukier 1 szklanka, ocet 1 szklanka, musztarda 3 łyżki, ketchup 1 szklanka, papryka ostra 1 łyżka",
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Bezy. Składniki: z 2 jajek - do 70 g łącznie białka średnich jajek, 100 g cukier drobny, szczypta sól",
+            "Przepis na Marcepan. Składniki: 250 g migdałów, 250 g cukru pudru, 50-70 ml likieru Amaretto",
+            "Przepis na Przecier pomidorowy. Składniki: 2 kg pomidorów, płaska łyżka soli - 10 g, płaska łyżka cukru - 10 g, szczypta pieprzu"
+        ],
+        "response": "{\"info\": \"Nie można przygotować żadnego z tych dań, ponieważ brakuje kluczowych składników (żeberka, udka gęsia, białka jaj/cukier drobny, migdały/likier Amaretto, pomidory).\", \"found\": false, \"dish_name\": null, \"dish_link\": null}",
+        "reference": "Prawidłowa odmowa. Użytkownik posiada wyłącznie płyny i przyprawy. Nie da się z nich przygotować żadnego pełnoprawnego posiłku ze zwróconej listy."
+    },
+    {
+        "test_id": "7_sniadanie",
+        "user_input": "Mam w lodówce: ['jajka', 'masło', 'sól', 'szczypiorek']",
+        "retrieved_contexts": [
+            "Przepis na Jajka na twardo. Składniki: jajka",
+            "Przepis na Jajka na miękko. Składniki: jajka",
+            "Przepis na Sos holenderski. Składniki: 150 g prawdziwego masła, 3 żółtka średnich jajek, 3 łyżki soku z cytryny, 1//4 łyżeczki soli, szczypta pieprzu",
+            "Przepis na Kopytka. Składniki: 1 kg ugotowane ziemniaki, około 230 g - 9 czubatych łyżek mąka pszenna tortowa, 1 sztuka średnie lub małe jajko, płaska łyżeczka sól",
+            "Przepis na Jajko sadzone. Składniki: 2 średnie jajka, 2 łyżeczki masła klarowanego, szczypta soli, odrobina koperku"
+        ],
+        "response": "{\"info\": \"Brak kluczowych składników: 'ziemniaki', 'mąka pszenna tortowa' (dla Kopytek) oraz 'żółtka średnich jajek' (choć masz jaja, brakuje precyzyjnego określenia żółtek dla Sosu holenderskiego). Najlepszą opcją jest Jajko sadzone.\", \"found\": true, \"dish_name\": \"Jajko sadzone\", \"dish_link\": \"https://aniagotuje.pl/przepis/jak-zrobic-jajko-sadzone\"}",
+        "reference": "Prawidłowy wybór. Użytkownik posiada jajka, masło i sól, więc bez problemu przygotuje 'Jajko sadzone', 'Jajka na miękko' lub 'Jajka na twardo'. Brak koperku można zastąpić posiadanym szczypiorkiem."
+    },
+    {
+        "test_id": "8_dorsz",
+        "user_input": "Mam w lodówce: ['filet z dorsza', 'czosnek', 'masło klarowane', 'cytryna', 'szpinak baby']",
+        "retrieved_contexts": [
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Karp z pieczarkami. Składniki: 1 sztuka - 550 g duży płat/filet z karpia, 2 łyżeczki świeżo wyciśnięty sok z cytryny, po pół łyżeczki sól i pieprz, 250 g pieczarki, 180 g cebula, 3 łyżki olej do smażenia, po 1/3 łyżeczki sól i pieprz",
+            "Przepis na Krem czosnkowy z grzankami czosnkowymi. Składniki: pieprz 1 szczypta, sól 1 szczypta, białe wino 0.5 szklanki, mleko 500 mililitrów, mąka 0.5 szklanki, masło 5 łyżek, oliwa 0.75 szklanki, czosnek ząbki 15 sztuk, bagietka 1 sztuka, natka pietruszki posiekana 4 łyżki",
+            "Przepis na Sandacz z sosem z pieczonej papryki – paprykowe aioli. Składniki: polędwiczki z sandacza 600 gramów, boczek wędzony 8 plastrów, kilka gałązek świeżego tymianku 1 garść, kilka gałązek świeżego rozmarynu 1 garść, czerwona papryka 2 sztuki, mała ostra papryczka chili 2 sztuki, cebula, nie obrana 1 sztuka, główka czosnku 1.5 sztuki, pomidor 1 sztuka, oliwa z oliwek 150 mililitrów, sok z jednej cytryny 50 mililitrów, cukier 2 łyżki, Przyprawa do ryb Knorr 3 łyżki, sól 0.5 łyżeczki",
+            "Przepis na Cielęce kotleciki z sosem pieczarkowym. Składniki: kotlety cielęce z kostką 8 sztuk, Przyprawa do mięs Knorr 2 łyżki, pieczarki 10 sztuk, cebula 0.5 sztuki, śmietana 36% 250 mililitrów, białe wytrawne wino 100 mililitrów, oliwa 30 mililitrów, świeży rozmaryn 1 sztuka, pieprz"
+        ],
+        "response": "{\n\"info\": \"Nie można przygotować żadnego z tych dań, ponieważ brakuje kluczowych składników (np. udka gęsia, karp, polędwiczki z sandacza, kotlety cielęce).\",\n\"found\": false,\n\"dish_name\": null,\n\"dish_link\": null\n}",
+        "reference": "Prawidłowa odmowa. Baza zwróciła przepisy na karpia, sandacza i cielęcinę. Ponieważ użytkownik ma tylko dorsza, nie może zrealizować żadnego z dostarczonych przepisów."
+    },
+    {
+        "test_id": "9_literowki",
+        "user_input": "Mam w lodówce: ['muka pszenna', 'smiotana', 'rzułtka', 'proszek d pieczenia']",
+        "retrieved_contexts": [
+            "Przepis na Kasztany jadalne. Składniki: 500 g kasztany jadalne",
+            "Przepis na Kopytka. Składniki: 1 kg ugotowane ziemniaki, około 230 g - 9 czubatych łyżek mąka pszenna tortowa, 1 sztuka średnie lub małe jajko, płaska łyżeczka sól",
+            "Przepis na Zupa mleczna z lanymi kluskami. Składniki: mąka pszenna 2 łyżki, mleko 1 litr, jajka 2 sztuki",
+            "Przepis na Udka gęsie pieczone. Składniki: 2 ząbki czosnek, po pół płaskiej łyżeczki sól, po pół płaskiej łyżeczki pieprz i słodka papryka, 2 gałązki świeży rozmaryn",
+            "Przepis na Jajka na miękko. Składniki: jajka"
+        ],
+        "response": "{\"info\": \"Nie można przygotować żadnego z tych dań, ponieważ brakuje kluczowych składników (ziemniaki, mleko, rozmaryn, jajka).\", \"found\": false, \"dish_name\": null, \"dish_link\": null}",
+        "reference": "Prawidłowa odmowa. Mimo zidentyfikowania składników (mąka, śmietana, żółtka), baza nie zwróciła żadnego przepisu, który można by z nich przygotować bez ogromnych braków (np. do Kopytek brak ziemniaków, do Zupy brak mleka)."
+    },
+    {
+        "test_id": "10_puste",
+        "user_input": "Mam w lodówce: ['null', 'nic', 'pusto', 'woda']",
+        "retrieved_contexts": [
+            "Przepis na Jajka na miękko. Składniki: jajka",
+            "Przepis na Jajka na twardo. Składniki: jajka",
+            "Przepis na Zupa szczawiowa. Składniki: woda 1.5 litra 2 łyżki",
+            "Przepis na Jak wykorzystać przejrzałe banany. Składniki: banany",
+            "Przepis na zxcz. Składniki: kura 1 kilogram"
+        ],
+        "response": "{\"info\": \"Nie można przygotować żadnego z tych dań, ponieważ brakuje kluczowych składników (np. jajek dla 'Jajka na miękko' i 'Jajka na twardo', bananów dla 'Jak wykorzystać przejrzałe banany' oraz kurczaka dla 'zxcz').\", \"found\": false, \"dish_name\": null, \"dish_link\": null}",
+        "reference": "Prawidłowa odmowa. Użytkownik nie podał żadnych prawdziwych składników spożywczych."
+    }
+]
