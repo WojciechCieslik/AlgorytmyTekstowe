@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
-from recipe_embedder import RecipeEmbedder
-from recipe_index import RecipeIndex
+from vector_base.recipe_embedder import RecipeEmbedder
+from vector_base.recipe_index import RecipeIndex
 
 class RecipeSearch:
     def __init__(self, embedder: RecipeEmbedder, index: RecipeIndex):
