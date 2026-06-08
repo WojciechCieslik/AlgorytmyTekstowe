@@ -10,26 +10,34 @@ def main():
     recipes = load_recipes_assets_from_dir(json_dir)
 
     embedder = RecipeEmbedder()
-    index = RecipeIndex(db_path="memory://")
+    #index = RecipeIndex(db_path="memory://")
+    index = RecipeIndex(db_path="./vector_db")
 
     # 3. Generuj embeddingi i wypełnij tabelę
     vectors = []
+    prawdziwe_przepisy = []  # Tworzymy nową listę tylko na poprawne dane
+
     for rec in recipes:
-        # Do embeddingu bierzemy TYLKO nazwy (z full_texts wyciągamy same nazwy)
-        # ale pełen tekst już jest w rec['ingredients_full']
-        # Potrzebujemy extrakcji samych nazw jeszcze raz:
         clean_names, _ = parse_recipe_ingredients(rec['ingredients_raw'])
+
+        # FILTR: Jeśli po oczyszczeniu przepis nie ma składników (to artykuł, nie przepis)
+        # to po prostu go ignorujemy i idziemy dalej!
+        if not clean_names:
+            continue
+
         vec = embedder.embed_recipe(rec['recipe_name'], clean_names)
         vectors.append(vec)
+        prawdziwe_przepisy.append(rec)  # Dodajemy tylko te, które przetrwały
 
-    index.create_table(recipes, np.array(vectors))
+    # Tworzymy bazę TYLKO z prawdziwych przepisów
+    index.create_table(prawdziwe_przepisy, np.array(vectors))
 
     # 4. Wyszukiwanie
     searcher = RecipeSearch(embedder, index)
 
     # Użytkownik podaje swoje składniki (na razie jako czyste nazwy)
     user_ingredients = ["kurczak", "cebula", "czosnek", "curry", "ryż"]
-    results = searcher.search(user_ingredients, k=3)
+    results = searcher.search(user_ingredients, k=10)
 
     print("Wyniki wyszukiwania:")
     for i, res in enumerate(results):

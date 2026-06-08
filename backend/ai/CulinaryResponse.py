@@ -17,4 +17,8 @@ class ActualizedRecipe(BaseModel):
 
 
 class Crucial(BaseModel):
-    crucial_ingredients_for_recipes: list[list[str]]
+    recipe_name: str
+    crucial_ingredients_for_recipe: list[str]
+
+class ListCrucial(BaseModel):
+    list: list[Crucial]
