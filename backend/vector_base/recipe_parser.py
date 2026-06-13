@@ -1,45 +1,29 @@
-from typing import List, Tuple, Any
+from typing import List, Union
 
-
-def parse_recipe_ingredients(ingredients: List[Any]) -> Tuple[List[str], List[str]]:
-    clean_names = []
+def parse_recipe_ingredients(ingredients: List[Union[str, List[str]]]) -> List[str]:
     full_texts = []
 
     for item in ingredients:
-        name = ""
-        unit = ""
-
-        if isinstance(item, list) and len(item) > 0:
-            if item[0] is None:
-                continue
-            name = str(item[0]).strip()
-            unit = str(item[1]).strip() if len(item) > 1 and item[1] is not None else ''
-
-        elif isinstance(item, str):
-            name = item.strip()
-            unit = ''
-
+        if isinstance(item, (list, tuple)):
+            # sklejaj gdy ilość i nazwa są oddzielnie
+            parts = [str(p).strip() for p in item if p is not None and str(p).strip()]
+            if len(parts) == 2:
+                full_text = f"{parts[1]} {parts[0]}".strip()
+            else:
+                full_text = " ".join(parts)
         else:
-            continue
+            # w przeciwnym wypadku nie tykaj
+            full_text = str(item).strip()
 
-        if not name:
-            continue
-
-        sub_names = [n.strip() for n in name.split(',') if n.strip()]
-        for sub in sub_names:
-            clean_names.append(sub)
-            tekst = f"{unit} {sub}".strip() if unit else sub
-            full_texts.append(tekst)
-
-    # Wypisujemy na konsolę wynik dla podglądu (Tryb Detektywa)
-    if not full_texts:
-        print(f"⚠️ UWAGA! Parser zwrócił pustą listę dla wejścia: {ingredients}")
+        if full_text:
+            full_texts.append(full_text)
 
     seen = set()
     unique_clean = []
-    for n in clean_names:
+    for n in full_texts:
         if n not in seen:
             seen.add(n)
             unique_clean.append(n)
 
-    return unique_clean, full_texts
+    return unique_clean
+

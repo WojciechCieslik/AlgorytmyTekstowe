@@ -102,8 +102,8 @@ if __name__ == '__main__':
     try:
         response_data = json.loads(response)
         if response_data["found"]:
-            print(f"Ze znalezionych składników można ugotować: {response_data["dish_name"]}\n"
-                  f"Pełny przepis znajdziesz pod adresem: {response_data["dish_link"]}\n"
+            print(f"Ze znalezionych składników można ugotować: {response_data["dishes"]["dish_name"]}\n"
+                  f"Pełny przepis znajdziesz pod adresem: {response_data["dishes"]["dish_link"]}\n"
                   f"Dodatkowe informacje: {response_data["info"]}"
                   )
         else:

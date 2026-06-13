@@ -1,7 +1,7 @@
 import ollama as ol
 import time
 #import ragas
-from ai.CulinaryResponse import CulinaryResponse, Crucial, ListCrucial
+from ai.CulinaryResponse import CulinaryResponse, Crucial
 
 
 def test_model(model_name,iterations,user_rec_prompt,sys_rec_prompt):
@@ -27,7 +27,7 @@ def test_model(model_name,iterations,user_rec_prompt,sys_rec_prompt):
 def add_crucial_ingredients_test(model_name,user_ing_prompt,sys_ing_prompt):
     message = [{'role': 'system', 'content': sys_ing_prompt},
                {'role': 'user', 'content': user_ing_prompt}]
-    format = ListCrucial.model_json_schema()
+    format = Crucial.model_json_schema()
     options = {"temperature":1}
     t1 = time.time()
     response = ol.chat(
@@ -45,7 +45,7 @@ def add_crucial_ingredients_test(model_name,user_ing_prompt,sys_ing_prompt):
 def add_crucial_ingredients(model_name,user_ing_prompt,sys_ing_prompt):
     message = [{'role': 'system', 'content': sys_ing_prompt},
                {'role': 'user', 'content': user_ing_prompt}]
-    format = ListCrucial.model_json_schema()
+    format = Crucial.model_json_schema()
     options = {"temperature":0}
     response = ol.chat(
         model=model_name,
