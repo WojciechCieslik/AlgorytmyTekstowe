@@ -1,0 +1,114 @@
+import json
+import threading
+import time
+import sys
+from ai.ai_agent import get_agent_response, add_crucial_ingredients
+from ai.system_prompts import crucial_ingredients_system_prompt as sys_rec_prompt, \
+    finding_recipe_system_prompt as sys_ing_prompt
+
+
+# Zmienne globalne na nasze ciężkie modele, żeby były dostępne dla całego programu
+vector_db = None
+embedder = None
+searcher = None
+modele_gotowe = False
+
+
+def rozgrzej_silniki_ai():
+    """Ta funkcja będzie działać w tle. Tutaj przenosimy ciężkie importy!"""
+    global vector_db, embedder, searcher, modele_gotowe
+
+    # Leniwe importy - wykonają się dopiero, gdy ten wątek wystartuje!
+    from vector_base.recipe_embedder import RecipeEmbedder
+    from vector_base.recipe_index import RecipeIndex
+    from vector_base.recipe_search import RecipeSearch
+
+
+    # Inicjalizacja ciężkich obiektów (ładowanie wag modelu do pamięci)
+    vector_db = RecipeIndex(db_path="./vector_base/vector_db")
+    embedder = RecipeEmbedder()
+    searcher = RecipeSearch(embedder, vector_db)
+
+    # Flaga, że wszystko jest załadowane
+    modele_gotowe = True
+
+
+if __name__ == '__main__':
+    print("🍽️ Witaj w Kulinarnym Asystencie AI!")
+
+    # 1. URUCHAMIAMY ŁADOWANIE W TLE
+    # Odpalamy ciężką funkcję na pobocznym torze (w osobnym wątku)
+    watek_ladowania = threading.Thread(target=rozgrzej_silniki_ai)
+    watek_ladowania.start()
+
+    # 2. PYTAMY UŻYTKOWNIKA BEZ CZEKANIA
+    # Python natychmiast przejdzie do tej linijki. Kiedy użytkownik będzie
+    # czytał ten tekst i zastanawiał się co wpisać, w tle załadują się modele!
+    print("Podaj składniki po przecinku (np. schab, ziemniaki, cebula).")
+    input_text = input("Lodówka zawiera: ")
+
+    # Zamieniamy tekst od użytkownika na listę
+    ingredients = [x.strip() for x in input_text.split(',')]
+
+    # 3. SPRAWDZAMY, CZY MODELE ZDĄŻYŁY SIĘ ZAŁADOWAĆ
+    # Jeśli użytkownik wpisał tekst bardzo szybko (np. w 1 sekundę),
+    # a modele ładują się 4 sekundy, musimy na nie grzecznie poczekać.
+    if not modele_gotowe:
+        print("⏳ Analizuję przepisy, daj mi jeszcze sekundkę na rozgrzanie...")
+        watek_ladowania.join()  # Blokuje program, aż watek_ladowania skończy pracę
+        print("✅ Gotowe!")
+
+    # 4. STARTUJEMY Z WŁAŚCIWYM PROGRAMEM
+    # Używamy obiektów, które załadowały się w tle
+    base = searcher.search(ingredients, k=10)
+    print("\nOto baza przepisów z wektorów:")
+    print(base)
+
+    user_ing_prompt = f"""
+        Oto dostępne przepisy:
+        {base}
+        Dodaj do bazy niezbędne składniki dla każdego z przepisów.
+        """
+
+    qwen_norm = 'qwen3:8b'
+    qwen_strong = 'qwen3:14b'
+    gemma = 'gemma4:latest'
+    gemma_strong = 'gemma4:12b'
+    phi = 'phi4:14b'
+    models = [qwen_norm, qwen_strong, phi]
+
+    print("crucial ingredients:")
+    crucial_ing = add_crucial_ingredients(qwen_norm, user_ing_prompt, sys_ing_prompt)
+    print(crucial_ing)
+
+    user_rec_prompt = f"""
+            Mam w lodówce: {ingredients}
+
+            Oto przepisy, które znalazłem w mojej bazie oraz kluczowe dla nich składniki:
+            ---
+            {base}
+            ---
+
+            Oto kluczowe składniki potrzebne do stworzenia odpowiednich przepisów:
+            {crucial_ing}
+
+            Czy mogę coś z tego ugotować?
+            Pod jakim linkiem znajdę przepis?
+            """
+    # print(f"{gemma}")
+    # for agent in models:
+    # print(f"{agent}")
+    response = get_agent_response(phi, user_rec_prompt, sys_rec_prompt)
+    try:
+        response_data = json.loads(response)
+        if response_data["found"]:
+            print(f"Ze znalezionych składników można ugotować: {response_data["dish_name"]}\n"
+                  f"Pełny przepis znajdziesz pod adresem: {response_data["dish_link"]}\n"
+                  f"Dodatkowe informacje: {response_data["info"]}"
+                  )
+        else:
+            print("Niestety nie udało się znaleźć odpowiedniego przepisu do podanych składników.\n"
+                  f"Dodatkowe informacje: {response_data["info"]}"
+                  )
+    except json.JSONDecodeError:
+        print("Błąd: Agent nie zwrócił poprawnego formatu JSON.")

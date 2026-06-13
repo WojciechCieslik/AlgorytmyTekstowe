@@ -24,7 +24,7 @@ def get_agent_response(model_name, user_rec_prompt, sys_rec_prompt):
         config=types.GenerateContentConfig(
             system_instruction=sys_rec_prompt,
             response_mime_type="application/json",
-            response_schema=CulinaryResponse,
+            #response_schema=CulinaryResponse,
             temperature=0.0  # Zero halucynacji
         )
     )
@@ -41,7 +41,7 @@ def add_crucial_ingredients(model_name, user_ing_prompt, sys_ing_prompt):
         config=types.GenerateContentConfig(
             system_instruction=sys_ing_prompt,
             response_mime_type="application/json",
-            response_schema=ListCrucial,
+            #response_schema=ListCrucial,
             temperature=0.0
         )
     )

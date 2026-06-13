@@ -27,7 +27,7 @@ if __name__ == '__main__':
     {base}
     Dodaj do bazy niezbędne składniki dla każdego z przepisów.
     """
-    gemini = 'gemini-3.5-flash'
+    gemini = 'gemma-4-31b-it'
     # qwen_norm = 'qwen3:8b'
     # qwen_strong = 'qwen3:14b'
     # gemma = 'gemma4:latest'
