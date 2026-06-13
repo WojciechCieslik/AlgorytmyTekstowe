@@ -9,8 +9,6 @@ class RecipeIndex:
         self.db = lancedb.connect(db_path)
         self.table_name = table_name
         self.tbl = None
-        if self.table_name in self.db.table_names():
-            self.tbl = self.db.open_table(self.table_name)
 
     def create_table(self, records: List[Dict[str, Any]], vectors: np.ndarray):
         if self.table_name in self.db.list_tables():

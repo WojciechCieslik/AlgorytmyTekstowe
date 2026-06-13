@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 
 class RecipeEmbedder:
-    def __init__(self, model_name: str = 'sdadas/mmlw-retrieval-roberta-large'):
+    def __init__(self, model_name: str = 'all-MiniLM-L6-v2'):
         self.model = SentenceTransformer(model_name)
         self.dim = getattr(self.model, "get_embedding_dimension", getattr(self.model, "get_sentence_embedding_dimension"))()
 

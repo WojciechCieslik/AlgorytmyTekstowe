@@ -2,7 +2,8 @@ from pathlib import Path
 from recipe_parser import parse_recipe_ingredients
 import json
 
-project_main_directory = Path(__file__).resolve().parent.parent.parent
+project_main_directory = Path(__file__).resolve().parent.parent.parent.parent
+
 
 # Load every file from a given 'dir_path' what satisfies format '*.json'
 def load_recipes_assets_from_dir(dir_path: Path) -> list:
