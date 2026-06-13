@@ -3,26 +3,27 @@ import numpy as np
 from recipe_embedder import RecipeEmbedder
 from recipe_index import RecipeIndex
 from recipe_search import RecipeSearch
-from recipe_assets import load_recipes_assets_from_dir, project_main_directory,parse_recipe_ingredients
+from recipe_assets import load_recipes_assets_from_dir, project_main_directory
 
 def main():
-    json_dir = project_main_directory / "json_data"
-    recipes = load_recipes_assets_from_dir(json_dir)
-
+    db_dir = project_main_directory / ".lancedb"
+    index = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
-    index = RecipeIndex(db_path="memory://")
 
-    # 3. Generuj embeddingi i wypełnij tabelę
-    vectors = []
-    for rec in recipes:
-        # Do embeddingu bierzemy TYLKO nazwy (z full_texts wyciągamy same nazwy)
-        # ale pełen tekst już jest w rec['ingredients_full']
-        # Potrzebujemy extrakcji samych nazw jeszcze raz:
-        clean_names, _ = parse_recipe_ingredients(rec['ingredients_raw'])
-        vec = embedder.embed_recipe(rec['recipe_name'], clean_names)
-        vectors.append(vec)
+    if "recipes" in index.db.list_tables():
+        print("Tabela 'recipes' już istnieje. Ładowanie z dysku...")
+        index.tbl = index.db.open_table("recipes")
+    else:
+        print("Baza wektorowa nie istnieje na dysku. Tworzenie i generowanie embeddingów...")
+        json_dir = project_main_directory / "json_data"
+        recipes = load_recipes_assets_from_dir(json_dir)
 
-    index.create_table(recipes, np.array(vectors))
+        # Używamy zoptymalizowanego batchowania
+        recipe_names = [rec['recipe_name'] for rec in recipes]
+        ingredients_lists = [rec['ingredients_full'] for rec in recipes]
+        vectors = embedder.embed_recipes(recipe_names, ingredients_lists)
+
+        index.create_table(recipes, vectors)
 
     # 4. Wyszukiwanie
     searcher = RecipeSearch(embedder, index)

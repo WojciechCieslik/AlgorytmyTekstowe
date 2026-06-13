@@ -2,7 +2,8 @@ from pathlib import Path
 from recipe_parser import parse_recipe_ingredients
 import json
 
-project_main_directory = Path(__file__).resolve().parent.parent
+project_main_directory = Path(__file__).resolve().parent.parent.parent.parent
+
 
 # Load every file from a given 'dir_path' what satisfies format '*.json'
 def load_recipes_assets_from_dir(dir_path: Path) -> list:
@@ -24,20 +25,31 @@ def load_recipes(json_path: str) -> list:
     recipes = []
 
     with open(json_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            if not line.strip():
-                continue
+        content = f.read().strip()
+        if not content:
+            return recipes
 
-            print(f"Parse line: [{line}]")
+        try:
+            items = json.loads(content)
+            if not isinstance(items, list):
+                items = [items]
+        except json.JSONDecodeError:
+            items = []
+            for line in content.splitlines():
+                if line.strip():
+                    try:
+                        items.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
 
-            item = json.loads(line)
-            clean_names, full_texts = parse_recipe_ingredients(item['ingredients'])
+        for item in items:
+            recipe_name = item.get('recipe_name') or item.get('name') or 'unknown'
+            full_texts = parse_recipe_ingredients(item['ingredients'])
 
             recipes.append({
-                "recipe_name": item['recipe_name'],
+                "recipe_name": recipe_name,
                 "url": item['url'],
                 "ingredients_full": full_texts,
-                "ingredients_raw": item['ingredients'],
             })
 
     return recipes

@@ -100,14 +100,15 @@ class KwestiaSmakuSpider(scrapy.Spider):
         
         ingredients = []
         for ing_text in raw_ingredients:
-            name_part, qty_part = split_ingredient(ing_text)
-            ingredients.append([name_part, qty_part])
+            ing_text = ing_text.strip()
+            if ing_text:
+                ingredients.append(ing_text)
         
         if name and ingredients:
             self.logger.info(f'Adding recipe: {name}')
             item = {
                 'url': response.url,
-                'name': name,
+                'recipe_name': name,
                 'ingredients': ingredients
             }
             self.results.append(item)
