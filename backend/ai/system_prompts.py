@@ -10,6 +10,13 @@ Musisz przestrzegać określonych zasad:
 """
 
 
+normalize_ingredients_system_prompt = """
+Jesteś asystentem kulinarnym. Twoim zadaniem jest znormalizowanie listy składników podanych przez użytkownika (np. usunięcie ilości, sprowadzenie do mianownika liczby pojedynczej), aby łatwiej było je wyszukiwać w bazie wektorowej. 
+Zwróć obiekt JSON z polem 'ingredients', będącym listą znormalizowanych nazw (np. ["pomidor", "pieczarka", "cebula czerwona"]). 
+WAŻNE: Użytkownik może napisać, że NIE MA jakiegoś składnika (np. "brak masła", "nie mam jajek"). Twoim zadaniem jest CAŁKOWICIE ZIGNOROWAĆ i USUNĄĆ takie składniki z listy wynikowej, ponieważ ich obecność zaburzy wektorowe wyszukiwanie przepisów. Lista ma zawierać TYLKO to, co użytkownik POSIADA.
+Nie dodawaj żadnego formatowania markdown (np. ```json) ani tekstu poza obiektem JSON.
+"""
+
 finding_recipe_system_prompt = ("""
     Jesteś bezwzględnym, analitycznym botem kulinarnym, którego zadaniem jest zadecydowanie czy użytkownik da radę ugotować jakiś przepis, gdy jest to możliwe to go podajesz, w przeciwnym wypadku informujesz, że to niemożliwe.
     Musisz ściśle przestrzegać określonych zasad:

@@ -2,11 +2,18 @@ from typing import Optional,List
 
 from pydantic import BaseModel, HttpUrl
 
+class NormalizedIngredients(BaseModel):
+    ingredients: List[str]
+
+class MatchingDish(BaseModel):
+    dish_name: str
+    dish_link: str
+    missing_ingredients: List[str]
+
 class CulinaryResponse(BaseModel):
     info: str
     found: bool
-    dish_name: Optional[str] = None
-    dish_link: Optional[str] = None
+    dishes: List[MatchingDish] = []
 
 
 class ActualizedRecipe(BaseModel):
@@ -17,8 +24,4 @@ class ActualizedRecipe(BaseModel):
 
 
 class Crucial(BaseModel):
-    recipe_name: str
-    crucial_ingredients_for_recipe: list[str]
-
-class ListCrucial(BaseModel):
-    list: list[Crucial]
+    crucial_ingredients_for_recipes: dict[str, list[str]]
