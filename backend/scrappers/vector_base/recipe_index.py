@@ -1,7 +1,7 @@
 import lancedb
 import pandas as pd
 import numpy as np
-import json
+
 from typing import List, Dict, Any
 
 class RecipeIndex:
@@ -11,7 +11,7 @@ class RecipeIndex:
         self.tbl = None
 
     def create_table(self, records: List[Dict[str, Any]], vectors: np.ndarray):
-        if self.table_name in self.db.table_names():
+        if self.table_name in self.db.list_tables():
             self.db.drop_table(self.table_name)
 
         rows = []
@@ -21,7 +21,6 @@ class RecipeIndex:
                 "name": rec["recipe_name"],
                 "url": rec["url"],
                 "ingredients_full": ", ".join(rec["ingredients_full"]),
-                "ingredients_raw": json.dumps(rec["ingredients_raw"], ensure_ascii=False)
             })
 
         df = pd.DataFrame(rows)

@@ -1,26 +1,29 @@
-from typing import List, Tuple
+from typing import List, Union
 
-def parse_recipe_ingredients(ingredients: List[List[str]]) -> Tuple[List[str], List[str]]:
-    clean_names = []
+def parse_recipe_ingredients(ingredients: List[Union[str, List[str]]]) -> List[str]:
     full_texts = []
 
-    for pair in ingredients:
-        if not pair[0]:
-            continue
+    for item in ingredients:
+        if isinstance(item, (list, tuple)):
+            # sklejaj gdy ilość i nazwa są oddzielnie
+            parts = [str(p).strip() for p in item if p is not None and str(p).strip()]
+            if len(parts) == 2:
+                full_text = f"{parts[1]} {parts[0]}".strip()
+            else:
+                full_text = " ".join(parts)
+        else:
+            # w przeciwnym wypadku nie tykaj
+            full_text = str(item).strip()
 
-        name = pair[0].strip()
-        unit = pair[1].strip() if len(pair) > 1 else ''
-
-        sub_names = [n.strip() for n in name.split(',') if n.strip()]
-        for sub in sub_names:
-            clean_names.append(sub)
-            full_texts.append(f"{unit} {sub}".strip())
+        if full_text:
+            full_texts.append(full_text)
 
     seen = set()
     unique_clean = []
-    for n in clean_names:
+    for n in full_texts:
         if n not in seen:
             seen.add(n)
             unique_clean.append(n)
 
-    return unique_clean, full_texts
+    return unique_clean
+
