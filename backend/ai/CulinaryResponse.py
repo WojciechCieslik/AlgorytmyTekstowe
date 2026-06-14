@@ -23,5 +23,9 @@ class ActualizedRecipe(BaseModel):
     crucial: list[str]
 
 
+class CrucialRecipe(BaseModel):
+    name: str
+    crucial_ingredients: List[str]
+
 class Crucial(BaseModel):
-    crucial_ingredients_for_recipes: dict[str, list[str]]
+    recipes: List[CrucialRecipe]
