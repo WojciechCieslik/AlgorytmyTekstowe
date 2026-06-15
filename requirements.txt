@@ -13,3 +13,4 @@ pandas
 numpy
 langchain_ollama
 langchain_huggingface
+customtkinter
