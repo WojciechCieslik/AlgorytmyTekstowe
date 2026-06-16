@@ -4,6 +4,7 @@ from scrapy.crawler import CrawlerProcess
 import json
 import re
 from datetime import datetime
+from pathlib import Path
 
 def split_ingredient(text):
     """
@@ -53,7 +54,9 @@ class KwestiaSmakuSpider(scrapy.Spider):
             href = a['href']
             if '/przepis/' in href:
                 links.append(response.urljoin(href))
-        
+
+        links = list(dict.fromkeys(links))
+
         LIMIT_PER_PAGE = 500
         if len(links) > LIMIT_PER_PAGE:
             links = links[:LIMIT_PER_PAGE]
@@ -63,9 +66,10 @@ class KwestiaSmakuSpider(scrapy.Spider):
         for item_url in links:
             yield scrapy.Request(item_url, self.parse_item)
         
-        next_page = soup.find('a', class_='pager__item--next') or \
-                    soup.find('a', title='Przejdź do następnej strony') or \
-                    soup.find('a', string='›')
+        next_page = (
+            soup.select_one('ul.pagination li.next a') or
+            soup.find('a', string='dalej')
+        )
         if next_page and next_page.get('href'):
             yield response.follow(next_page['href'], self.parse)
 
@@ -117,7 +121,7 @@ class KwestiaSmakuSpider(scrapy.Spider):
     def closed(self, reason):
         if self.results:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f'kwestiasmaku_{timestamp}.json'
+            filename = Path(__file__).parent / f'kwestiasmaku_{timestamp}.json'
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(self.results, f, ensure_ascii=False, indent=2)
             self.logger.info(f'Zapisano {len(self.results)} przepisów do pliku {filename}')
