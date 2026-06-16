@@ -42,7 +42,7 @@ def init_ai_models(status_callback=None):
         status_callback("Ładowanie modelu językowego i embeddera...")
 
     # Ścieżka do bazy
-    db_dir = project_main_directory / ".lancedb"
+    db_dir = project_main_directory / "./backend/vector_base/vector_db"
     vector_db = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
 

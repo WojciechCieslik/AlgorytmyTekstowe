@@ -6,7 +6,7 @@ from recipe_search import RecipeSearch
 from recipe_assets import load_recipes_assets_from_dir, project_main_directory
 
 def main():
-    db_dir = project_main_directory / ".lancedb"
+    db_dir = project_main_directory / "backend/vector_base/vector_db"
     index = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
 

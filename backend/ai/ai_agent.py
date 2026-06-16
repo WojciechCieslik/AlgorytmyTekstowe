@@ -7,7 +7,7 @@ def add_crucial_ingredients(model_name,user_ing_prompt,sys_ing_prompt):
     message = [{'role': 'system', 'content': sys_ing_prompt},
                {'role': 'user', 'content': user_ing_prompt}]
     format = Crucial.model_json_schema()
-    options = {"temperature":0}
+    options = {"temperature":0,"num_predict": 800}
     response = ol.chat(
         model=model_name,
         messages=message,
@@ -20,7 +20,7 @@ def normalize_ingredients(model_name,user_prompt,sys_prompt):
     message = [{'role': 'system', 'content': sys_prompt},
                {'role': 'user', 'content': user_prompt}]
     format = NormalizedIngredients.model_json_schema()
-    options = {"temperature":0}
+    options = {"temperature":0,"num_predict": 5000,}
     response = ol.chat(
         model=model_name,
         messages=message,
