@@ -1,5 +1,5 @@
 import json
-
+from pathlib import Path
 from vector_base.recipe_embedder import RecipeEmbedder
 from vector_base.recipe_index import RecipeIndex
 from vector_base.recipe_search import RecipeSearch
@@ -15,7 +15,6 @@ def main():
     embedder = RecipeEmbedder()
     searcher = RecipeSearch(embedder, vector_db)
 
-
     model_crucial = 'qwen3:8b'
     gemma_strong = 'gemma4:12b'
     qwen_norm = 'qwen3:8b'
@@ -23,76 +22,98 @@ def main():
     gemma = 'gemma4:latest'
 
     phi = 'phi4:14b'
-    models = [model_crucial ,  gemma_strong  ,qwen_strong ,phi]
-    for model_agent in models:
+    # models = [model_crucial, gemma_strong, qwen_strong, phi]
+    # model_crucial = 'llama3.2:3b'
+    # model_crucial = 'qwen2.5:3b'
+    model_crucial = 'qwen2.5:7b'
+    qwen_norm = 'qwen2.5:7b'
+    gemma_light = 'gemma4:latest'
+    qwen_max_gpu = 'qwen3:8b'
+    models = [qwen_norm, gemma_light, qwen_max_gpu]
+    testowe_lodowki = {
+        # KATEGORIA 1: IDEALNE DOPASOWANIA
+        "1_schabowy": ["schab", "jajka", "bułka tarta", "smalec", "sól", "pieprz", "ziemniaki"],
+        "2_nalesniki": ["mąka pszenna", "mleko", "jajka", "woda", "olej", "sól"],
 
+        # KATEGORIA 2: PUŁAPKI NA BRAKUJĄCY SKŁADNIK (Brak bazy)
+        "3_kopytka_brak_maki": ["ziemniaki", "jajka", "sól", "masło", "boczek"],
+        "4_paella_brak_ryzu": ["pierś z kurczaka", "krewetki", "groszek", "cebula", "czosnek", "pomidory"],
 
-        # model_agent = 'gemma4:latest'
+        # KATEGORIA 3: SZUM INFORMACYJNY I NADMIAR
+        "5_szum": ["truskawki", "czosnek", "boczek", "czekolada", "musztarda"],
+        "6_tylko_przyprawy": ["sól", "pieprz", "olej", "ocet", "cukier", "woda", "musztarda"],
 
-        testowe_lodowki = {
-            # KATEGORIA 1: IDEALNE DOPASOWANIA
-            "1_schabowy": ["schab", "jajka", "bułka tarta", "smalec", "sól", "pieprz", "ziemniaki"],
-            "2_nalesniki": ["mąka pszenna", "mleko", "jajka", "woda", "olej", "sól"],
+        # KATEGORIA 4: DANIA SPECJALISTYCZNE / MAŁO SKŁADNIKÓW
+        "7_sniadanie": ["jajka", "masło", "sól", "szczypiorek"],
+        "8_dorsz": ["filet z dorsza", "czosnek", "masło klarowane", "cytryna", "szpinak baby"],
 
-            # KATEGORIA 2: PUŁAPKI NA BRAKUJĄCY SKŁADNIK (Brak bazy)
-            "3_kopytka_brak_maki": ["ziemniaki", "jajka", "sól", "masło", "boczek"],
-            "4_paella_brak_ryzu": ["pierś z kurczaka", "krewetki", "groszek", "cebula", "czosnek", "pomidory"],
+        # KATEGORIA 5: ZŁE ZAPYTANIA OD UŻYTKOWNIKA
+        "9_literowki": ["muka pszenna", "smiotana", "rzułtka", "proszek d pieczenia"],
+        "10_puste": ["null", "nic", "pusto", "woda"]
+    }
 
-            # KATEGORIA 3: SZUM INFORMACYJNY I NADMIAR
-            "5_szum": ["truskawki", "czosnek", "boczek", "czekolada", "musztarda"],
-            "6_tylko_przyprawy": ["sól", "pieprz", "olej", "ocet", "cukier", "woda", "musztarda"],
+    print("2. Przygotowywanie wspólnego kontekstu (Wyszukiwanie + Crucial Ingredients)...")
+    precomputed_contexts = {}
+    for test_name, ingredients in testowe_lodowki.items():
+        print(f" -> Przygotowuję dane dla: {test_name}")
 
-            # KATEGORIA 4: DANIA SPECJALISTYCZNE / MAŁO SKŁADNIKÓW
-            "7_sniadanie": ["jajka", "masło", "sól", "szczypiorek"],
-            "8_dorsz": ["filet z dorsza", "czosnek", "masło klarowane", "cytryna", "szpinak baby"],
+        baza_wyniki = searcher.search(ingredients, k=15)
+        baza_str = json.dumps(baza_wyniki, ensure_ascii=False)
+        contexts_list = [f"Przepis na {res['name']}. Składniki: {res['ingredients_full']}" for res in baza_wyniki]
+        print(f" -> Przeszukano bazę ({len(contexts_list)})")
 
-            # KATEGORIA 5: ZŁE ZAPYTANIA OD UŻYTKOWNIKA
-            "9_literowki": ["muka pszenna", "smiotana", "rzułtka", "proszek d pieczenia"],
-            "10_puste": ["null", "nic", "pusto", "woda"]
+        user_ing_prompt = f"Oto dostępne przepisy:\n{baza_str}\nDodaj do bazy niezbędne składniki dla każdego z przepisów."
+        crucial_ing = add_crucial_ingredients(model_crucial, user_ing_prompt, sys_ing_prompt)
+        print(" -> Pobrano kluczowe składniki")
+
+        user_rec_prompt = f"""
+                Mam w lodówce: {ingredients}
+                Oto przepisy, które znalazłem w mojej bazie oraz kluczowe dla nich składniki:
+                ---
+                {baza_str}
+                ---
+                Oto kluczowe składniki dla każdego z przepisów:
+                {crucial_ing}
+                Czy mogę coś z tego przygotować do jedzenia?
+                """
+
+        precomputed_contexts[test_name] = {
+            "ingredients": ingredients,
+            "contexts_list": contexts_list,
+            "user_rec_prompt": user_rec_prompt
         }
 
+    # zapis przetworzonych danych składników dla oszczędności mocy obliczeniowej i czasu
+    CACHE_FILE = Path("ai/precomputed_contexts_cache.json")
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(precomputed_contexts, f, ensure_ascii=False, indent=4)
+
+    print(f"-> Bezpiecznie zapisano cache do pliku: {CACHE_FILE}")
+    print("\n3. Rozpoczynam generowanie odpowiedzi dla poszczególnych modeli agentów...")
+
+    for model_agent in models:
+        print(f"\n[MODEL AGENTA: {model_agent}]")
         raw_dataset = []
 
         print("2. Rozpoczynam generowanie zestawu testowego...")
-        for test_name, ingredients in testowe_lodowki.items():
-            print(f" -> Przetwarzam: {test_name}")
+        for test_name, ctx in precomputed_contexts.items():
+            print(f" -> Generuję odpowiedź agenta dla: {test_name}")
 
-            # Wyszukiwanie w bazie
-            baza_wyniki = searcher.search(ingredients, k=5)
-            baza_str = json.dumps(baza_wyniki, ensure_ascii=False)
-
-            # Przekształcamy wyniki z bazy na listę stringów dla Ragas
-            contexts_list = [f"Przepis na {res['name']}. Składniki: {res['ingredients_full']}" for res in baza_wyniki]
-
-            # Pobieranie kluczowych składników
-            user_ing_prompt = f"Oto dostępne przepisy:\n{baza_str}\nDodaj do bazy niezbędne składniki dla każdego z przepisów."
-            crucial_ing = add_crucial_ingredients(model_crucial, user_ing_prompt, sys_ing_prompt)
-
-            #Decyzja ostateczna
-            user_rec_prompt = f"""
-            Mam w lodówce: {ingredients}
-            Oto przepisy, które znalazłem w mojej bazie oraz kluczowe dla nich składniki:
-            ---
-            {baza_str}
-            ---
-            Oto kluczowe składniki dla każdego z przepisów:
-            {crucial_ing}
-            Czy mogę coś z tego ugotować?
-            """
-            agent_response = get_agent_response(model_agent, user_rec_prompt, sys_rec_prompt)
-
+            agent_response = get_agent_response(model_agent, ctx["user_rec_prompt"], sys_rec_prompt)
+            print(f" -> Uzyskano odpowiedź agenta")
 
             sample = {
                 "test_id": test_name,
-                "user_input": f"Mam w lodówce: {ingredients}",
-                "retrieved_contexts": contexts_list,
+                "user_input": f"Mam w lodówce: {ctx['ingredients']}",
+                "retrieved_contexts": ctx["contexts_list"],
                 "response": agent_response,
                 "reference": ""
             }
             raw_dataset.append(sample)
+            print(" -> Zakończono przetwarzanie")
 
-
-        output_file = f"ai/{model_agent}_test_dataset.json"
+        model_name = model_agent.replace(":", "_")
+        output_file = f"ai/{model_name}_test_dataset.json"
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(raw_dataset, f, ensure_ascii=False, indent=4)
 
