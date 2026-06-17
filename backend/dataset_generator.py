@@ -15,8 +15,21 @@ def main():
     embedder = RecipeEmbedder()
     searcher = RecipeSearch(embedder, vector_db)
 
+    model_crucial = 'qwen3:8b'
+    gemma_strong = 'gemma4:12b'
+    qwen_norm = 'qwen3:8b'
+    qwen_strong = 'qwen3:14b'
+    gemma = 'gemma4:latest'
+
     phi = 'phi4:14b'
-    qwen= 'qwen3:8b'
+    # models = [model_crucial, gemma_strong, qwen_strong, phi]
+    # model_crucial = 'llama3.2:3b'
+    # model_crucial = 'qwen2.5:3b'
+    model_crucial = 'qwen2.5:7b'
+    qwen_norm = 'qwen2.5:7b'
+    gemma_light = 'gemma4:latest'
+    qwen_max_gpu = 'qwen3:8b'
+    models = [qwen_norm, gemma_light, qwen_max_gpu]
     testowe_lodowki = {
         # KATEGORIA 1: IDEALNE DOPASOWANIA
         "1_schabowy": ["schab", "jajka", "bułka tarta", "smalec", "sól", "pieprz", "ziemniaki"],
@@ -50,7 +63,7 @@ def main():
         print(f" -> Przeszukano bazę ({len(contexts_list)})")
 
         user_ing_prompt = f"Oto dostępne przepisy:\n{baza_str}\nDodaj do bazy niezbędne składniki dla każdego z przepisów."
-        crucial_ing = add_crucial_ingredients(qwen, user_ing_prompt, sys_ing_prompt)
+        crucial_ing = add_crucial_ingredients(model_crucial, user_ing_prompt, sys_ing_prompt)
         print(" -> Pobrano kluczowe składniki")
 
         user_rec_prompt = f"""
@@ -78,64 +91,33 @@ def main():
     print(f"-> Bezpiecznie zapisano cache do pliku: {CACHE_FILE}")
     print("\n3. Rozpoczynam generowanie odpowiedzi dla poszczególnych modeli agentów...")
 
+    for model_agent in models:
+        print(f"\n[MODEL AGENTA: {model_agent}]")
+        raw_dataset = []
 
+        print("2. Rozpoczynam generowanie zestawu testowego...")
+        for test_name, ctx in precomputed_contexts.items():
+            print(f" -> Generuję odpowiedź agenta dla: {test_name}")
 
+            agent_response = get_agent_response(model_agent, ctx["user_rec_prompt"], sys_rec_prompt)
+            print(f" -> Uzyskano odpowiedź agenta")
 
+            sample = {
+                "test_id": test_name,
+                "user_input": f"Mam w lodówce: {ctx['ingredients']}",
+                "retrieved_contexts": ctx["contexts_list"],
+                "response": agent_response,
+                "reference": ""
+            }
+            raw_dataset.append(sample)
+            print(" -> Zakończono przetwarzanie")
 
-    print(f"\n[MODEL AGENTA: {qwen} and {phi}]")
-    raw_dataset = []
+        model_name = model_agent.replace(":", "_")
+        output_file = f"ai/{model_name}_test_dataset.json"
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(raw_dataset, f, ensure_ascii=False, indent=4)
 
-    print("2. Rozpoczynam generowanie zestawu testowego...")
-    for test_name, ctx in precomputed_contexts.items():
-        print(f" -> Generuję odpowiedź agenta dla: {test_name}")
-
-        agent_response = get_agent_response(phi, ctx["user_rec_prompt"], sys_rec_prompt)
-        print(f" -> Uzyskano odpowiedź agenta")
-
-        sample = {
-            "test_id": test_name,
-            "user_input": f"Mam w lodówce: {ctx['ingredients']}",
-            "retrieved_contexts": ctx["contexts_list"],
-            "response": agent_response,
-            "reference": ""
-        }
-        raw_dataset.append(sample)
-        print(" -> Zakończono przetwarzanie")
-
-    model_name = phi.replace(":", "_")
-    output_file = f"ai/{model_name}_test_dataset.json"
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(raw_dataset, f, ensure_ascii=False, indent=4)
-
-    print(f"\nGotowe! Wygenerowano plik '{output_file}'. Otwórz go i uzupełnij pole 'reference'!")
-
-
-    from ai.agent_gemini_api import get_agent_response as response_gemini
-
-    print(f"\n[MODEL AGENTA: gemini(API)")
-    raw_dataset = []
-    gemini = 'gemma-4-31b-it'
-    print("2. Rozpoczynam generowanie zestawu testowego...")
-    for test_name, ctx in precomputed_contexts.items():
-        print(f" -> Generuję odpowiedź agenta dla: {test_name}")
-
-        agent_response = response_gemini(gemini, ctx["user_rec_prompt"], sys_rec_prompt)
-        print(f" -> Uzyskano odpowiedź agenta")
-
-        sample = {
-            "test_id": test_name,
-            "user_input": f"Mam w lodówce: {ctx['ingredients']}",
-            "retrieved_contexts": ctx["contexts_list"],
-            "response": agent_response,
-            "reference": ""
-        }
-        raw_dataset.append(sample)
-        print(" -> Zakończono przetwarzanie")
-
-    model_name = gemini.replace(":", "_")
-    output_file = f"ai/{model_name}_test_dataset.json"
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(raw_dataset, f, ensure_ascii=False, indent=4)
+        print(f"\nGotowe! Wygenerowano plik '{output_file}'. Otwórz go i uzupełnij pole 'reference'!")
 
 
 if __name__ == '__main__':
