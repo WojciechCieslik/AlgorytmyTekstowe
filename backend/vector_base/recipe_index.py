@@ -1,3 +1,8 @@
+import os
+
+os.environ["ARROW_LOG_LEVEL"] = "FATAL"
+os.environ["GLOG_minloglevel"] = "2"
+
 import lancedb
 import pandas as pd
 import numpy as np
@@ -13,7 +18,7 @@ class RecipeIndex:
             self.tbl = self.db.open_table(self.table_name)
 
     def create_table(self, records: List[Dict[str, Any]], vectors: np.ndarray):
-        if self.table_name in self.db.list_tables():
+        if self.table_name in self.db.table_names():
             self.db.drop_table(self.table_name)
 
         rows = []

@@ -3,6 +3,9 @@ from recipe_parser import parse_recipe_ingredients
 import json
 
 project_main_directory = Path(__file__).resolve().parent.parent.parent
+backend_directory = Path(__file__).resolve().parent.parent
+VECTOR_DB_RELATIVE = "vector_base/vector_db"
+vector_db_directory = backend_directory / "vector_base" / "vector_db"
 
 # Load every file from a given 'dir_path' what satisfies format '*.json'
 def load_recipes_assets_from_dir(dir_path: Path) -> list:

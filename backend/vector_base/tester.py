@@ -3,14 +3,15 @@ import numpy as np
 from recipe_embedder import RecipeEmbedder
 from recipe_index import RecipeIndex
 from recipe_search import RecipeSearch
-from recipe_assets import load_recipes_assets_from_dir, project_main_directory
+from recipe_assets import load_recipes_assets_from_dir, project_main_directory, vector_db_directory
 
 def main():
-    db_dir = project_main_directory / ".lancedb"
+    db_dir = vector_db_directory
+    db_dir.mkdir(parents=True, exist_ok=True)
     index = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
 
-    if "recipes" in index.db.list_tables():
+    if "recipes" in index.db.table_names():
         print("Tabela 'recipes' już istnieje. Ładowanie z dysku...")
         index.tbl = index.db.open_table("recipes")
     else:

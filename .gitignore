@@ -1,5 +1,7 @@
 backend/__pycache__
 frontend/__pycache__
+backend/vector_base/vector_db/
 
 /venv
 /.idea
+/.lancedb
