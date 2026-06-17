@@ -10,7 +10,7 @@ def main():
     index = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
 
-    if "recipes" in index.db.list_tables():
+    if "recipes" in index.db.table_names():
         print("Tabela 'recipes' już istnieje. Ładowanie z dysku...")
         index.tbl = index.db.open_table("recipes")
     else:

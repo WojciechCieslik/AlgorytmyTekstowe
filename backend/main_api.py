@@ -19,8 +19,8 @@ def prepare_imports():
     from vector_base.recipe_search import RecipeSearch
 
 
-    # Inicjalizacja bazy wektorowe
-    vector_db = RecipeIndex(db_path="./vector_base/vector_db")
+    # Inicjalizacja bazy (vector_base/vector_db względem katalogu backend/)
+    vector_db = RecipeIndex(db_path="vector_base/vector_db")
     embedder = RecipeEmbedder()
     searcher = RecipeSearch(embedder, vector_db)
 
