@@ -1,6 +1,8 @@
-import ollama as ol
 import time
-from ai.CulinaryResponse import CulinaryResponse, Crucial, NormalizedIngredients
+
+import ollama as ol
+
+from backend.ai.CulinaryResponse import CulinaryResponse, Crucial, NormalizedIngredients
 
 OLLAMA_TIMEOUT_SEC = 180.0
 
