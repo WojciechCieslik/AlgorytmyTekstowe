@@ -3,11 +3,10 @@ import numpy as np
 from recipe_embedder import RecipeEmbedder
 from recipe_index import RecipeIndex
 from recipe_search import RecipeSearch
-from recipe_assets import load_recipes_assets_from_dir, project_main_directory, vector_db_directory
+from recipe_assets import load_recipes_assets_from_dir, project_main_directory
 
 def main():
-    db_dir = vector_db_directory
-    db_dir.mkdir(parents=True, exist_ok=True)
+    db_dir = project_main_directory / "backend/vector_base/vector_db"
     index = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
 

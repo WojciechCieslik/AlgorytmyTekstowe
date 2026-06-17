@@ -1,38 +1,6 @@
-import time
-
 import ollama as ol
-
+import time
 from backend.ai.CulinaryResponse import CulinaryResponse, Crucial, NormalizedIngredients
-
-OLLAMA_TIMEOUT_SEC = 180.0
-
-
-def _chat(model_name, messages, format_schema=None, options=None, timeout=OLLAMA_TIMEOUT_SEC):
-    client = ol.Client(timeout=timeout)
-    opts = {"temperature": 0, "num_predict": 2048}
-    if options:
-        opts.update(options)
-    if "qwen3" in model_name.lower():
-        opts["think"] = False
-
-    kwargs = {
-        "model": model_name,
-        "messages": messages,
-        "options": opts,
-    }
-    if format_schema is not None:
-        kwargs["format"] = format_schema
-
-    try:
-        response = client.chat(**kwargs)
-    except Exception:
-        if opts.pop("think", None) is not None:
-            kwargs["options"] = opts
-            response = client.chat(**kwargs)
-        else:
-            raise
-
-    return response["message"]["content"]
 
 
 def add_crucial_ingredients(model_name, user_ing_prompt, sys_ing_prompt):
@@ -40,7 +8,15 @@ def add_crucial_ingredients(model_name, user_ing_prompt, sys_ing_prompt):
         {"role": "system", "content": sys_ing_prompt},
         {"role": "user", "content": user_ing_prompt},
     ]
-    return _chat(model_name, message, format_schema=Crucial.model_json_schema())
+    format = Crucial.model_json_schema()
+    options = {"temperature": 0}
+    response = ol.chat(
+        model=model_name,
+        messages=message,
+        format=format,
+        options=options,
+    )
+    return response["message"]["content"]
 
 
 def normalize_ingredients(model_name, user_prompt, sys_prompt):
@@ -48,7 +24,15 @@ def normalize_ingredients(model_name, user_prompt, sys_prompt):
         {"role": "system", "content": sys_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    return _chat(model_name, message, format_schema=NormalizedIngredients.model_json_schema())
+    format = NormalizedIngredients.model_json_schema()
+    options = {"temperature": 0}
+    response = ol.chat(
+        model=model_name,
+        messages=message,
+        format=format,
+        options=options,
+    )
+    return response["message"]["content"]
 
 
 def get_agent_response(model_name, user_rec_prompt, sys_rec_prompt):
@@ -56,14 +40,23 @@ def get_agent_response(model_name, user_rec_prompt, sys_rec_prompt):
         {"role": "system", "content": sys_rec_prompt},
         {"role": "user", "content": user_rec_prompt},
     ]
+
     format_schema = CulinaryResponse.model_json_schema()
-
-    for _ in range(2):
-        content = _chat(model_name, message, format_schema=format_schema, timeout=300.0)
-        if content and content.strip():
-            return content
-
-    return '{"found": false, "info": "Nie udalo sie uzyskac odpowiedzi od modelu.", "dishes": []}'
+    options = {"temperature": 0.0}
+    i = 0
+    while True:
+        response = ol.chat(
+            model=model_name,
+            messages=message,
+            format=format_schema,
+            options=options,
+        )
+        print(response["message"]["content"])
+        if len(response["message"]["content"]) > 0:
+            return response["message"]["content"]
+        i += 1
+        if i >= 1:
+            return "Nie udało się znaleźć przepisu"
 
 
 def test_model(model_name, iterations, user_rec_prompt, sys_rec_prompt):
@@ -71,14 +64,20 @@ def test_model(model_name, iterations, user_rec_prompt, sys_rec_prompt):
         {"role": "system", "content": sys_rec_prompt},
         {"role": "user", "content": user_rec_prompt},
     ]
-    format_schema = CulinaryResponse.model_json_schema()
+    format = CulinaryResponse.model_json_schema()
+    options = {"temperature": 0}
 
     for i in range(iterations):
         t1 = time.time()
         print(f"Iteracja {i + 1}")
-        content = _chat(model_name, message, format_schema=format_schema)
+        response = ol.chat(
+            model=model_name,
+            messages=message,
+            format=format,
+            options=options,
+        )
         t2 = time.time()
-        print(content)
+        print(response["message"]["content"])
         print("czas: ", t2 - t1)
         print("")
 
@@ -88,14 +87,16 @@ def add_crucial_ingredients_test(model_name, user_ing_prompt, sys_ing_prompt):
         {"role": "system", "content": sys_ing_prompt},
         {"role": "user", "content": user_ing_prompt},
     ]
+    format = Crucial.model_json_schema()
+    options = {"temperature": 1}
     t1 = time.time()
-    content = _chat(
-        model_name,
-        message,
-        format_schema=Crucial.model_json_schema(),
-        options={"temperature": 1},
+    response = ol.chat(
+        model=model_name,
+        messages=message,
+        format=format,
+        options=options,
     )
     t2 = time.time()
     print("czas: ", t2 - t1)
     print("")
-    return content
+    return response["message"]["content"]

@@ -41,13 +41,13 @@ def init_ai_models(status_callback=None):
     from backend.vector_base.recipe_search import RecipeSearch
     
     # Importy potrzebne do generowania bazy
-    from backend.vector_base.recipe_assets import load_recipes_assets_from_dir, project_main_directory, vector_db_directory
+    from backend.vector_base.recipe_assets import load_recipes_assets_from_dir, project_main_directory
 
     if status_callback:
         status_callback("Ładowanie modelu językowego i embeddera...")
 
-    # vector_base/vector_db — ta sama lokalizacja co w main.py, ale ścieżka absolutna (GUI uruchamiane z korzenia projektu)
-    db_dir = vector_db_directory
+    # Ścieżka do bazy (preferowana wersja z main)
+    db_dir = project_main_directory / "backend" / "vector_base" / "vector_db"
     db_dir.mkdir(parents=True, exist_ok=True)
     vector_db = RecipeIndex(db_path=str(db_dir))
     embedder = RecipeEmbedder()
